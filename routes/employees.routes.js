@@ -4,7 +4,7 @@ const Employee = require("../models/employee.model");
 
 router.get("/employees", async (req, res) => {
   try {
-    res.json(await Employee.find());
+    res.json(await Employee.find().populate("departmentId"));
   } catch (err) {
     res.status(500).json({ message: err });
   }
@@ -35,13 +35,13 @@ router.get("/employees/:id", async (req, res) => {
 });
 
 router.post("/employees", async (req, res) => {
-  const { firstName, lastName, department } = req.body;
+  const { firstName, lastName, departmentId } = req.body;
   try {
     const { name } = req.body;
     const newEmployee = new Employee({
       firstName: firstName,
       lastName: lastName,
-      department: department,
+      departmentId: departmentId,
     });
     await newEmployee.save();
     res.json({ message: "OK" });
@@ -51,11 +51,11 @@ router.post("/employees", async (req, res) => {
 });
 
 router.put("/employees/:id", async (req, res) => {
-  const { firstName, lastName, department } = req.body;
+  const { firstName, lastName, departmentId } = req.body;
   const setObject = {};
   if (firstName) setObject.firstName = firstName;
   if (lastName) setObject.lastName = lastName;
-  if (department) setObject.department = department;
+  if (departmentId) setObject.departmentId = departmentId;
   try {
     const employee = await Employee.findById(req.params.id);
     if (employee) {
