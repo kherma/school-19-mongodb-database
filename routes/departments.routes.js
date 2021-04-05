@@ -48,16 +48,15 @@ router.post("/departments", async (req, res) => {
 router.put("/departments/:id", async (req, res) => {
   const { name } = req.body;
   try {
-    const department = await Department.findById(req.params.id);
-    if (department) {
-      await Department.updateOne(
-        { _id: req.params.id },
-        { $set: { name: name } }
-      );
-      res.json({ message: "OK" });
-    } else {
-      res.status(404).json({ message: "Not found..." });
-    }
+    await Department.findByIdAndUpdate(
+      req.params.id,
+      { name: name },
+      { new: true },
+      (err, department) => {
+        if (err) res.status(404).json({ message: "Not found..." });
+        else res.json({ message: "UPDATE", data: department });
+      }
+    );
   } catch (err) {
     res.status(500).json({ message: err });
   }
@@ -65,13 +64,10 @@ router.put("/departments/:id", async (req, res) => {
 
 router.delete("/departments/:id", async (req, res) => {
   try {
-    const department = await Department.findById(req.params.id);
-    if (department) {
-      await Department.deleteOne({ _id: req.params.id });
-      res.json({ message: "OK" });
-    } else {
-      res.status(404).json({ message: "Not found..." });
-    }
+    await Department.findByIdAndRemove(req.params.id, (err, department) => {
+      if (err) res.status(404).json({ message: "Not found..." });
+      else res.json({ message: "DELETE", data: department });
+    });
   } catch (err) {
     res.status(500).json({ message: err });
   }
