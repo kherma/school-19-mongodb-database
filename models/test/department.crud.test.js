@@ -28,7 +28,7 @@ describe("Department", () => {
   // ===========
 
   describe("Reading data", () => {
-    before(async () => {
+    beforeEach(async () => {
       const testDepOne = new Department({ name: "Department #1" });
       await testDepOne.save();
       const testDepTwo = new Department({ name: "Department #2" });

@@ -12,6 +12,7 @@ const mongoose = require("mongoose");
 const employeesRoutes = require("./routes/employees.routes");
 const departmentsRoutes = require("./routes/departments.routes");
 const productsRoutes = require("./routes/products.routes");
+const { model } = require("./models/employee.model");
 
 // ===============
 // Setup
@@ -39,11 +40,11 @@ app.use((req, res) => {
 // BackEnd to DB connection
 // =========================
 
-mongoose.connect("mongodb://localhost:27017/companyDB", {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
-
+const dbURI =
+  process.env.NODE_ENV === "production"
+    ? "mongodb://localhost:27017/companyDB" // url to remote db
+    : "mongodb://localhost:27017/companyDB"; // url to local db
+mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true });
 const db = mongoose.connection;
 
 db.once("open", () => {
@@ -58,6 +59,8 @@ db.on("error", (err) => {
 // Express server start
 // =======================
 
-app.listen("8000", () => {
+const server = app.listen("8000", () => {
   console.log("Server is running on port: 8000");
 });
+
+module.exports = server;
